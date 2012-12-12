@@ -2,36 +2,27 @@ _ = require "underscore"
 inf = Number.POSITIVE_INFINITY
 
 arbBool = ->
-  (if Math.random() > 0.5 then true else false)
+  -> (if Math.random() > 0.5 then true else false)
 
-arbDouble = (opts)->
-  if opts
-    minMaxVal = 100
-    {
-      min
-      max
-      include_zero
-      include_NAN
-      include_infinites
-    } = opts
-    min?= -minMaxVal
-    max?= minMaxVal
-    include_zero = true if include_zero == undefined
-    include_NaN = false if include_NaN == undefined
-    include_infinites = false if include_NaN == undefined
-    do ->
-      firstVals = [max, min]
-      firstVals.push 0 if include_zero
-      firstVals.push NaN if include_NaN
-      if include_infinites
-        firstVals.push inf, -inf
-      -> 
-        if firstVals.length > 0
-          firstVals.shift()
-        else 
-          Math.random() * (max - min) + min
-  else 
-    arbDouble({})
+arbDouble = (opts = {})->
+  minMaxVal = 100
+  {min, max, include_zero, include_NAN, include_infinites} = opts
+  min?= -minMaxVal
+  max?= minMaxVal
+  include_zero = true if include_zero == undefined
+  include_NaN = false if include_NaN == undefined
+  include_infinites = false if include_NaN == undefined
+  do ->
+    firstVals = [max, min]
+    firstVals.push 0 if include_zero
+    firstVals.push NaN if include_NaN
+    if include_infinites
+      firstVals.push inf, -inf
+    -> 
+      if firstVals.length > 0
+        firstVals.shift()
+      else 
+        Math.random() * (max - min) + min
 
 arbDoubleTest = ->
   # Random Doubles
@@ -43,28 +34,25 @@ arbDoubleTest = ->
   firstVals = doubles[..2]
   console.assert _.isEqual firstVals, [100, -100, 0]
 
-arbInt = ->
-  sign = (if Math.random() > 0.5 then 1 else -1)
-  sign * Math.floor(Math.random() * Number.MAX_VALUE)
+arbInt = (opts = {}) ->
+  fn = arbDouble(opts)
+  -> Math.floor fn()
 
 arbByte = ->
-  Math.floor Math.random() * 256
+  arbInt({max: 256, min: 0})
 
 arbChar = ->
-  String.fromCharCode arbByte()
+  byteGen = arbByte()
+  -> String.fromCharCode byteGen()
 
 arbArray = (generator) ->
-  len = Math.floor(Math.random() * 100)
-  array = []
-  i = undefined
-  i = 0
-  while i < len
-    array.push generator()
-    i++
-  array
+  -> 
+    len = Math.floor(Math.random() * 100)
+    generator() for i in [0..len]
 
 arbString = ->
-  arbArray(arbChar).join ""
+  gen = arbArray(arbChar())
+  -> gen().join ""
 
 forAll = (property, generators..., opts) ->
   if typeof opts == 'function'
@@ -102,21 +90,21 @@ test = ->
   propertyEven = (x) ->
     x % 2 is 0
 
-  console.assert not forAllSilent(propertyEven, arbByte)
+  console.assert not forAllSilent(propertyEven, arbByte())
   propertyNumber = (x) ->
     typeof (x) is "number"
 
-  console.assert forAllSilent(propertyNumber, arbInt)
+  console.assert forAllSilent(propertyNumber, arbInt())
   propertyTrue = (x) ->
     x
 
-  console.assert not forAllSilent(propertyTrue, arbBool)
+  console.assert not forAllSilent(propertyTrue, arbBool())
 
   propLengths = (s1,s2) ->s1.length + s2.length == (s1 + s2).length
-  console.assert forAll propLengths , arbString, arbString, {tries: 400}
+  console.assert forAll propLengths , arbString(), arbString(), {tries: 400}
 
   propAddIdent = (i) -> i + 0 == i
-  console.assert forAll propAddIdent, arbByte, {tries: 10, verbose: true}
+  console.assert forAll propAddIdent, arbByte(), {tries: 10, verbose: true}
   true
 
 exports = {
