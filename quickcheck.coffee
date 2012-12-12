@@ -27,7 +27,7 @@ arbArray = (generator) ->
 
 arbString = ->
   arbArray(arbChar).join ""
-  
+
 forAll = (property, generators..., opts) ->
   if typeof opts == 'function'
     generators.push opts
@@ -82,15 +82,16 @@ test = ->
   console.assert forAll propAddIdent, arbByte, {tries: 10, verbose: true}
   true
 
-exports.arbBool = arbBool
-exports.arbDouble = arbDouble
-exports.arbInt = arbInt
-exports.arbByte = arbByte
-exports.arbChar = arbChar
-exports.arbArray = arbArray
-exports.arbString = arbString
-exports.forAll = forAll
-exports.forAllSilent = forAllSilent
-exports.test = test
+exports = {
+  arbBool
+  arbDouble
+  arbInt
+  arbByte 
+  arbChar
+  arbArray
+  arbString
+  forAll
+  forAllSilent
+}
 
 test()
