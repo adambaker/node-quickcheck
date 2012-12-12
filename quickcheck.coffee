@@ -1,9 +1,47 @@
+_ = require "underscore"
+inf = Number.POSITIVE_INFINITY
+
 arbBool = ->
   (if Math.random() > 0.5 then true else false)
 
-arbDouble = ->
-  sign = (if Math.random() > 0.5 then 1 else -1)
-  sign * Math.random() * Number.MAX_VALUE
+arbDouble = (opts)->
+  if opts
+    minMaxVal = 100
+    {
+      min
+      max
+      include_zero
+      include_NAN
+      include_infinites
+    } = opts
+    min?= -minMaxVal
+    max?= minMaxVal
+    include_zero = true if include_zero == undefined
+    include_NaN = false if include_NaN == undefined
+    include_infinites = false if include_NaN == undefined
+    do ->
+      firstVals = [max, min]
+      firstVals.push 0 if include_zero
+      firstVals.push NaN if include_NaN
+      if include_infinites
+        firstVals.push inf, -inf
+      -> 
+        if firstVals.length > 0
+          firstVals.shift()
+        else 
+          Math.random() * (max - min) + min
+  else 
+    arbDouble({})
+
+arbDoubleTest = ->
+  # Random Doubles
+  doubleGen = arbDouble()
+  doubles = (doubleGen() for i in [0..10000])
+  negativeDoubles =  _.filter doubles, (double) -> double < 0
+  console.assert .4 < negativeDoubles.length / doubles.length < .6  
+
+  firstVals = doubles[..2]
+  console.assert _.isEqual firstVals, [100, -100, 0]
 
 arbInt = ->
   sign = (if Math.random() > 0.5 then 1 else -1)
@@ -59,9 +97,8 @@ forAllSilent = ->
 
 # Test quickcheck itself
 test = ->
-  propertyEven = undefined
-  propertyNumber = undefined
-  propertyTrue = undefined
+  arbDoubleTest()
+
   propertyEven = (x) ->
     x % 2 is 0
 
