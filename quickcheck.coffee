@@ -1,15 +1,20 @@
 arbBool = ->
   (if Math.random() > 0.5 then true else false)
+
 arbDouble = ->
   sign = (if Math.random() > 0.5 then 1 else -1)
   sign * Math.random() * Number.MAX_VALUE
+
 arbInt = ->
   sign = (if Math.random() > 0.5 then 1 else -1)
   sign * Math.floor(Math.random() * Number.MAX_VALUE)
+
 arbByte = ->
   Math.floor Math.random() * 256
+
 arbChar = ->
   String.fromCharCode arbByte()
+
 arbArray = (generator) ->
   len = Math.floor(Math.random() * 100)
   array = []
@@ -19,8 +24,10 @@ arbArray = (generator) ->
     array.push generator()
     i++
   array
+
 arbString = ->
   arbArray(arbChar).join ""
+  
 forAll = (property, generators..., opts) ->
   if typeof opts == 'function'
     generators.push opts
