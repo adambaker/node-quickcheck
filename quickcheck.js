@@ -11,32 +11,23 @@
       }
     };
   };
-  arbDouble = function(opts){
-    var minMaxVal, min, max, include_zero, include_NAN, include_infinites, include_NaN;
-    opts == null && (opts = {});
-    minMaxVal = 100;
-    min = opts.min, max = opts.max, include_zero = opts.include_zero, include_NAN = opts.include_NAN, include_infinites = opts.include_infinites;
-    min == null && (min = -minMaxVal);
-    max == null && (max = minMaxVal);
-    if (include_zero === void 8) {
-      include_zero = true;
-    }
-    if (include_NaN === void 8) {
-      include_NaN = false;
-    }
-    if (include_NaN === void 8) {
-      include_infinites = false;
-    }
+  arbDouble = function(arg$){
+    var ref$, min, ref1$, max, includeZero, includeNaN, includeInfinites;
+    ref$ = arg$ != null
+      ? arg$
+      : {}, min = (ref1$ = ref$.min) != null
+      ? ref1$
+      : -100, max = (ref1$ = ref$.max) != null ? ref1$ : 100, includeZero = (ref1$ = ref$.includeZero) != null ? ref1$ : true, includeNaN = (ref1$ = ref$.includeNaN) != null ? ref1$ : false, includeInfinites = (ref1$ = ref$.includeInfinites) != null ? ref1$ : false;
     return function(){
       var firstVals;
       firstVals = [max, min];
-      if (include_zero) {
+      if (includeZero) {
         firstVals.push(0);
       }
-      if (include_NaN) {
+      if (includeNaN) {
         firstVals.push(NaN);
       }
-      if (include_infinites) {
+      if (includeInfinites) {
         firstVals.push(inf, -inf);
       }
       return function(){

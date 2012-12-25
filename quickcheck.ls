@@ -4,19 +4,19 @@ inf = Number.POSITIVE_INFINITY
 arbBool = ->
   -> (if Math.random() > 0.5 then true else false)
 
-arbDouble = (opts = {})->
-  minMaxVal = 100
-  {min, max, include_zero, include_NAN, include_infinites} = opts
-  min ?= -minMaxVal
-  max ?= minMaxVal
-  include_zero = true if include_zero == undefined
-  include_NaN = false if include_NaN == undefined
-  include_infinites = false if include_NaN == undefined
+arbDouble = ({
+  min               = -100,
+  max               = 100,
+  include-zero      = true,
+  include-NaN       = false,
+  include-infinites = false,
+} = {}
+)->
   do ->
     firstVals = [max, min]
-    firstVals.push 0 if include_zero
-    firstVals.push NaN if include_NaN
-    if include_infinites
+    firstVals.push 0 if include-zero
+    firstVals.push NaN if include-NaN
+    if include-infinites
       firstVals.push inf, -inf
     ->
       if firstVals.length > 0
@@ -46,7 +46,7 @@ arbChar = ->
   -> String.fromCharCode byteGen()
 
 arbArray = (generator) ->
-  -> 
+  ->
     len = Math.floor(Math.random() * 100)
     [generator() for i in [til len]]
 
