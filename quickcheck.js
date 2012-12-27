@@ -1,5 +1,5 @@
 (function(){
-  var _, inf, arbBool, arbDouble, arbDoubleTest, arbInt, arbByte, arbChar, arbArray, arbString, forAll, forAllSilent, test, exports, slice$ = [].slice;
+  var _, inf, arbBool, arbDouble, arbInt, arbByte, arbChar, arbArray, arbString, forAll, forAllSilent, test, slice$ = [].slice;
   _ = require("underscore");
   inf = Number.POSITIVE_INFINITY;
   arbBool = function(){
@@ -21,7 +21,7 @@
     return function(){
       var firstVals;
       firstVals = [max, min];
-      if (includeZero) {
+      if (includeZero && max >= 0 && min <= 0) {
         firstVals.push(0);
       }
       if (includeNaN) {
@@ -38,29 +38,6 @@
         }
       };
     }();
-  };
-  arbDoubleTest = function(){
-    var doubleGen, doubles, res$, i$, ref$, len$, i, negativeDoubles, firstVals;
-    doubleGen = arbDouble();
-    res$ = [];
-    for (i$ = 0, len$ = (ref$ = (fn$())).length; i$ < len$; ++i$) {
-      i = ref$[i$];
-      res$.push(doubleGen());
-    }
-    doubles = res$;
-    negativeDoubles = _.filter(doubles, function(double){
-      return double < 0;
-    });
-    console.assert(0.4 < (ref$ = negativeDoubles.length / doubles.length) && ref$ < 0.6);
-    firstVals = [doubles[0], doubles[1], doubles[2]];
-    return console.assert(_.isEqual(firstVals, [100, -100, 0]));
-    function fn$(){
-      var i$, results$ = [];
-      for (i$ = 0; i$ < 10000; ++i$) {
-        results$.push(i$);
-      }
-      return results$;
-    }
   };
   arbInt = function(opts){
     var fn;
@@ -145,7 +122,6 @@
   };
   test = function(){
     var propertyEven, propertyNumber, propertyTrue, propLengths, propAddIdent;
-    arbDoubleTest();
     propertyEven = function(x){
       return x % 2 === 0;
     };
@@ -173,7 +149,7 @@
     }));
     return true;
   };
-  exports = {
+  module.exports = {
     arbBool: arbBool,
     arbDouble: arbDouble,
     arbInt: arbInt,

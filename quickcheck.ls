@@ -14,7 +14,7 @@ arbDouble = ({
 )->
   do ->
     firstVals = [max, min]
-    firstVals.push 0 if include-zero
+    firstVals.push 0 if include-zero && max >= 0 && min <= 0
     firstVals.push NaN if include-NaN
     if include-infinites
       firstVals.push inf, -inf
@@ -23,16 +23,6 @@ arbDouble = ({
         firstVals.shift()
       else
         Math.random() * (max - min) + min
-
-arbDoubleTest = ->
-  # Random Doubles
-  doubleGen = arbDouble()
-  doubles = [doubleGen() for i in [til 10000]]
-  negativeDoubles =  _.filter doubles, (double) -> double < 0
-  console.assert 0.4 < negativeDoubles.length / doubles.length < 0.6
-
-  firstVals = doubles[0 to 2]
-  console.assert _.isEqual firstVals, [100, -100, 0]
 
 arbInt = (opts = {}) ->
   fn = arbDouble(opts)
@@ -85,8 +75,6 @@ forAllSilent = ->
 
 # Test quickcheck itself
 test = ->
-  arbDoubleTest()
-
   propertyEven = (x) ->
     x % 2 is 0
 
@@ -107,11 +95,11 @@ test = ->
   console.assert forAll propAddIdent, arbByte(), {tries: 10, verbose: true}
   true
 
-exports = {
+module.exports = {
   arbBool
   arbDouble
   arbInt
-  arbByte 
+  arbByte
   arbChar
   arbArray
   arbString
