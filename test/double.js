@@ -1,11 +1,12 @@
 (function(){
-  var assert, arbDouble, inf;
+  var assert, arbDouble, test, inf;
   assert = require('chai').assert;
   arbDouble = require('../quickcheck').arbDouble;
   require('prelude-ls').installPrelude(global);
+  test = it;
   inf = Number.POSITIVE_INFINITY;
-  describe('arbDouble', function(x){
-    it('should yield numbers', function(){
+  describe('arbDouble', function(){
+    test('should yield numbers', function(){
       var doubles, i$, i;
       doubles = arbDouble();
       for (i$ = 1; i$ <= 100; ++i$) {
@@ -13,16 +14,16 @@
         assert.isNumber(doubles(), 'doubles returns numbers');
       }
     });
-    describe('defaults', function(x){
+    describe('defaults', function(){
       beforeEach(function(){
         this.doubles = arbDouble();
       });
-      it('should first yield 100 and -100', function(){
+      test('should first yield 100 and -100', function(){
         assert.equal(this.doubles(), 100, '100 default max comes first');
         assert.equal(this.doubles(), -100, '-100 default min comes next');
         assert.equal(this.doubles(), 0, '0 included third');
       });
-      it('should not generate infinites or NaN', function(){
+      test('should not generate infinites or NaN', function(){
         var i$, i, x;
         for (i$ = 1; i$ <= 100; ++i$) {
           i = i$;
@@ -31,8 +32,8 @@
         }
       });
     });
-    describe('options', function(x){
-      it('should accept new max and min values', function(){
+    describe('options', function(){
+      test('should accept new max and min values', function(){
         var doubles, i$, i, x;
         doubles = arbDouble({
           min: Math.PI,
@@ -47,7 +48,7 @@
           assert.operator(x, '>=', Math.PI, 'greater than min');
         }
       });
-      it('should add NaN after max, min, and zero with includeNaN', function(){
+      test('should add NaN after max, min, and zero with includeNaN', function(){
         var doubles;
         doubles = arbDouble({
           includeNaN: true
@@ -57,7 +58,7 @@
         doubles();
         assert(isItNaN(doubles(), 'NaN'));
       });
-      it('should add infinites after with includeInfinites', function(){
+      test('should add infinites after with includeInfinites', function(){
         var doubles;
         doubles = arbDouble({
           includeInfinites: true,
@@ -70,7 +71,7 @@
         assert.equal(doubles(), inf, 'infinity');
         assert.equal(doubles(), -inf, '-infinity');
       });
-      it('should not include zero if that is suppressed.', function(){
+      test('should not include zero if that is suppressed.', function(){
         var doubles;
         doubles = arbDouble({
           includeZero: false,
